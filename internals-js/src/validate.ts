@@ -347,6 +347,14 @@ class Validator {
           { nodes: sourceASTs(application, argument) },
         );
       }
+
+      const validTagName = /^[_A-Za-z][-\/_0-9A-Za-z]*$/;
+      if (definition.name == "tag" && argument.name == "name" && !validTagName.test(value)) {
+        this.addError(
+          `${application} must specify ${argument.name} matching ${validTagName}`,
+          { nodes: sourceASTs(application, argument) },
+        );
+      }
     }
   }
 }

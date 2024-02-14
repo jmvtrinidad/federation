@@ -2803,6 +2803,74 @@ describe('composition', () => {
       const tagOnQ2 = supergraph.schemaDefinition.rootType('query')?.field('q2')?.appliedDirectivesOf('apolloTag').pop();
       expect(tagOnQ2?.arguments()['name']).toBe('t2');
     })
+
+    describe('@tag name formatting', () => {
+      const invalidCharacters = [..." !@#$%^&*(){}[]|;:+=.?`~"];
+      const invalidStartCharacters = invalidCharacters.concat([..."0123456789"]);
+
+      it.each(invalidStartCharacters)('rejects @tag names starting with invalid characters', (symbol) => {
+        const tagName = `${symbol}test`;
+        const subgraph = {
+          typeDefs: gql`
+            extend schema
+              @link(url: "https://specs.apollo.dev/federation/v2.0", import: ["@tag"])
+
+            type Query {
+              foo: String @tag(name: "${tagName}")
+            }
+          `,
+          name: 'subgraphA'
+        }
+        const result = composeServices([subgraph]);
+        const messages = result.errors?.map(e => e.message) ?? [];
+
+        expect(messages).toContain(
+          `[subgraphA] @tag(name: "${tagName}") must specify name matching /^[_A-Za-z][-\\/_0-9A-Za-z]*$/`
+        );
+      });
+
+      it.each(invalidCharacters)('rejects @tag names containing invalid characters', (symbol) => {
+        const tagName = `test${symbol}test`;
+        const subgraph = {
+          typeDefs: gql`
+            extend schema
+              @link(url: "https://specs.apollo.dev/federation/v2.0", import: ["@tag"])
+
+            type Query {
+              foo: String @tag(name: "${tagName}")
+            }
+          `,
+          name: 'subgraphA'
+        }
+        const result = composeServices([subgraph]);
+        const messages = result.errors?.map(e => e.message) ?? [];
+
+        expect(messages).toContain(
+          `[subgraphA] @tag(name: "${tagName}") must specify name matching /^[_A-Za-z][-\\/_0-9A-Za-z]*$/`
+        );
+      });
+
+      it.each(invalidCharacters)('rejects @tag names ending with invalid characters', (symbol) => {
+        const tagName = `test${symbol}`;
+        const subgraph = {
+          typeDefs: gql`
+            extend schema
+              @link(url: "https://specs.apollo.dev/federation/v2.0", import: ["@tag"])
+
+            type Query {
+              foo: String @tag(name: "${tagName}")
+            }
+          `,
+          name: 'subgraphA'
+        }
+        const result = composeServices([subgraph]);
+        const messages = result.errors?.map(e => e.message) ?? [];
+
+        expect(messages).toContain(
+          `[subgraphA] @tag(name: "${tagName}") must specify name matching /^[_A-Za-z][-\\/_0-9A-Za-z]*$/`
+        );
+      });
+    });
   });
 
   describe('@inaccessible', () => {
