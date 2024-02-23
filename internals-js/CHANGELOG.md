@@ -1,5 +1,13 @@
 # CHANGELOG for `@apollo/federation-internals`
 
+## 2.7.2
+
+### Patch Changes
+
+- When a linked directive requires a federation version higher than the linked federation spec, upgrade to the implied version and issue a hint ([#2929](https://github.com/apollographql/federation/pull/2929))
+
+- When auto-upgrading a subgraph (i.e. one that does not explicitly @link the federation spec) do not go past v2.4. This is so that subgraphs will not inadvertently require the latest join spec (which cause the router or gateway not to start if running an older version). ([#2933](https://github.com/apollographql/federation/pull/2933))
+
 ## 2.7.1
 
 ### Patch Changes

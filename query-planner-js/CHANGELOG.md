@@ -1,5 +1,15 @@
 # CHANGELOG for `@apollo/query-planner`
 
+## 2.7.2
+
+### Patch Changes
+
+- When auto-upgrading a subgraph (i.e. one that does not explicitly @link the federation spec) do not go past v2.4. This is so that subgraphs will not inadvertently require the latest join spec (which cause the router or gateway not to start if running an older version). ([#2933](https://github.com/apollographql/federation/pull/2933))
+
+- Updated dependencies [[`33b937b18d3c7ca6af14b904696b536399e597d1`](https://github.com/apollographql/federation/commit/33b937b18d3c7ca6af14b904696b536399e597d1), [`09cd3e55e810ee513127b7440f5b11af7540c9b0`](https://github.com/apollographql/federation/commit/09cd3e55e810ee513127b7440f5b11af7540c9b0)]:
+  - @apollo/federation-internals@2.7.2
+  - @apollo/query-graphs@2.7.2
+
 ## 2.7.1
 
 ### Patch Changes
